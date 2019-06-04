@@ -19,12 +19,15 @@ cc.Class({
         escapeInput: cc.EditBox,
         actionButton: cc.Button,
         actionButtonLable: cc.Label,
+
+        historyContainer: cc.Node,
     },
 
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
         this.initSocket();
+        this.historyContainer = this.historyContainer.getComponent('GameHistoryContainer');
     },
 
     start () {
@@ -111,6 +114,9 @@ cc.Class({
           if(this._timer)
             clearInterval(this._timer);
           this.timesLabel.string = (state.data.crashpoint * 1.0 / 100).toFixed(2) + 'x';
+          if(this.historyContainer.node.childrenCount >= 5)
+            this.historyContainer.node.removeChild(this.historyContainer.node.children[0]);
+          this.historyContainer.addItem(state.data);
         break;
       }
     },

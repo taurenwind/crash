@@ -28,7 +28,7 @@ cc.Class({
     },
 
     start () {
-
+        this.go();
     },
 
     update (dt) {

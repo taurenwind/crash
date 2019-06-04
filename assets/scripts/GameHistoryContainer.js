@@ -1,15 +1,9 @@
-var GameHistory = require("model/GameHistory");
 cc.Class({
     extends: cc.Component,
 
     properties: {
-        items : {
-            default : [],
-            type : GameHistory
-        }
+        itemPrefab: cc.Prefab
     },
-
-    // LIFE-CYCLE CALLBACKS:
 
     // onLoad () {},
 
@@ -17,4 +11,9 @@ cc.Class({
 
     },
 
+    addItem: function(data) {
+        var item = cc.instantiate(this.itemPrefab);
+        this.node.addChild(item);
+        item.getComponent('GameHistory').init(data);
+    }
 });
