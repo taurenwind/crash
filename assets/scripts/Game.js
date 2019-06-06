@@ -1,12 +1,3 @@
-// Learn cc.Class:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/class.html
-//  - [English] http://docs.cocos2d-x.org/creator/manual/en/scripting/class.html
-// Learn Attribute:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/reference/attributes.html
-//  - [English] http://docs.cocos2d-x.org/creator/manual/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
-//  - [English] https://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 cc.Class({
     extends: cc.Component,
@@ -21,6 +12,7 @@ cc.Class({
         actionButtonLable: cc.Label,
 
         historyContainer: cc.Node,
+        userHistoryContainer: cc.Node,
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -28,6 +20,7 @@ cc.Class({
     onLoad () {
         this.initSocket();
         this.historyContainer = this.historyContainer.getComponent('GameHistoryContainer');
+        this.userHistoryContainer = this.userHistoryContainer.getComponent('UserHistoryContainer');
     },
 
     start () {
@@ -40,7 +33,7 @@ cc.Class({
         var self = this;
         var label = this.socketInfo;
         var socket = io.connect('http://127.0.0.1:3000',{
-            query: 'token=' + 543456
+            query: 'token=' + 543456 + '&userId='+'12345'
         });
         this._socketIO = socket;
         socket.on('connected', function(){
@@ -71,6 +64,9 @@ cc.Class({
           });
           socket.on('reward', function(msg){
             label.string = 'ever winner, chicken dinner ' + msg
+          });
+          socket.on('history', function(msg) {
+            self._refreshUserHistory(msg);
           });
     },
 
@@ -136,6 +132,17 @@ cc.Class({
         this._joined = false;
         this.actionButton.enabled = false;
       }
+    },
+    _refreshUserHistory(msg) {
+      var history = JSON.parse(msg);
+      if(history.length > 0) {
+        this.userHistoryContainer.node.removeAllChildren();
+        history.forEach(item => {
+          this.userHistoryContainer.addItem(item);
+        });
+      }
+          //   this.historyContainer.node.removeChild(this.historyContainer.node.children[0]);
+          // this.historyContainer.addItem(state.data);
     },
     doAction() {
       if(this._state == 'stake')
