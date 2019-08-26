@@ -13,7 +13,7 @@ cc.Class({
         this.roundId.string = data.round_id;
         this.result.string = data.bust;
         this.stake.string = data.stake == null?'-':data.stake;
-        this.reward.string = data.reward== null?'-':data.reward;
+        this.reward.string = data.reward == null?'-':data.reward;
         this.hash.string = data.hash;
     }
 });

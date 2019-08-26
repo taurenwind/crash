@@ -15,7 +15,7 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-        baseBG : cc.Sprite,
+        baseBG : [cc.Sprite],
         repeatBG : [cc.Sprite],
         speed : 100,
     },
@@ -33,9 +33,12 @@ cc.Class({
 
     update (dt) {
         if(this._state == STATE_DYNAMIC) {
-            if(this.baseBG && !this._outOfScreen(this.baseBG)) {
-                this.baseBG.node.y -= this.speed * dt;
+            for(let i = 0; i < this.baseBG.length; i++) {
+                if(this.baseBG[i] && !this._outOfScreen(this.baseBG[i])) {
+                    this.baseBG[i].node.y -= this.speed * dt;
+                }
             }
+            
             for(let i = 0; i < this.repeatBG.length; i++) {
                 let tile = this.repeatBG[i];
                 tile.node.y -= this.speed * dt;
@@ -53,14 +56,19 @@ cc.Class({
 
     initPos() {
         if(this.baseBG) {
-            this.baseBG.node.x = 0;
-            this.baseBG.node.y = 0;
+            let x = 0;
+            let y = 0;
+            for(let i = 0; i< this.baseBG.length; i++) {
+                this.baseBG[i].node.x = x;
+                this.baseBG[i].node.y = i == 0 ? y : y + this.baseBG[i].node.height / 2;
+                y  += this.baseBG[i].node.height / 2;
+            }
         }
         for(let i = 0; i < this.repeatBG.length; i++) {
             let tile = this.repeatBG[i];
             if(i == 0) {
                 if(this.baseBG) {
-                    tile.node.y = this.baseBG.node.height / 2+ tile.node.height/2;
+                    tile.node.y = this.baseBG[this.baseBG.length - 1].node.y + this.baseBG[this.baseBG.length - 1].node.height / 2+ tile.node.height/2;
                 } else
                     tile.node.y = 0;
             } else {
